@@ -63,6 +63,11 @@ static uint32_t bit_pos_to_segment_index(uint32_t bit_pos);
 static void print_pos(void)
 {
     int i;
+
+    for(i=0; i<32; i++)
+        printf("%d", ((31-i)/10));
+    printf("\n");
+
     for(i=0; i<32; i++)
         printf("%d",(31-i)%10);
     printf("\n");
@@ -150,7 +155,7 @@ static void print_decoded_segs(void)
             }
             else if( (j <= s->upper) && (j >= s->lower))
             {
-                printf("*");
+                printf("%c", (register_value & (1 << j)) ? '1':'0' );
             }
             else
             {
@@ -228,10 +233,20 @@ static void decode_register(char* value_str)
         return;
     }
 
-    //TODO check the returns
-    (void)ret;
     ret = populate_register_info_from_config(register_name, cfg_file_name, &register_info);
+    if(false == ret)
+    {
+        printf("Error: failed to populate register info\n");
+        return;
+    }
+
     ret = validate_register_info(&register_info);
+    if(false == ret)
+    {
+        printf("Error: failed to validate register info\n");
+        return;
+    }
+
     normalise_name_lengths(&register_info);
     print_decode_header();
 }
